@@ -13,6 +13,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'signup.html'));
 });
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'login.html'));
+});
 
 // Use the user routes
 app.use('/api', userRoutes);
