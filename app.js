@@ -1,24 +1,32 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const cors = require('cors');
 const userRoutes = require('./routes/userroutes');
+const expenseRoutes = require('./routes/expenseroutes');
 const sequelize = require('./util/database');
 
 const app = express();
-
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve the signup HTML file at the root URL
-app.get('/', (req, res) => {
+// Serve HTML files
+app.get('/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'signup.html'));
 });
+
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'login.html'));
 });
 
-// Use the user routes
-app.use('/api', userRoutes);
+app.get('/expenses', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'expenses.html'));
+});
+
+// Use routes
+app.use('/api/users', userRoutes);
+app.use('/api/expenses', expenseRoutes);
 
 // Error handling for unmatched routes
 app.use((req, res) => {
