@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const signup = async (req, res) => {
     const { name, email, password } = req.body;
@@ -33,8 +34,8 @@ const login = async (req, res) => {
             return res.status(401).json({ message: 'User not authorized.' });
         }
 
-        // Here, you might want to set a session or token
-        res.status(200).json({ message: 'User login successful.', userId: user.id });
+        const token = jwt.sign({ userId: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
+        res.status(200).json({ message: 'User login successful.', token });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error logging in.' });
