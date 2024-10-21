@@ -4,16 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expenses</title>
+    <style>
+        .premium-button {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>Expenses</h1>
+    <button class="premium-button" id="buy-premium">Buy Premium Membership</button>
     <form id="expense-form">
         <label for="amount">Amount:</label><br>
         <input type="number" id="amount" required><br><br>
-
         <label for="description">Description:</label><br>
         <input type="text" id="description" required><br><br>
-
         <label for="category">Category:</label><br>
         <select id="category" required>
             <option value="" disabled selected>Select a category</option>
@@ -24,7 +30,6 @@
             <option value="Entertainment">Entertainment</option>
             <option value="Other">Other</option>
         </select><br><br>
-
         <input type="submit" value="Add Expense">
     </form>
     <div id="message"></div>
@@ -32,6 +37,51 @@
     <ul id="expense-list"></ul>
 
     <script>
+        document.getElementById('buy-premium').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/users/premium', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    const options = {
+                        key: 'YOUR_RAZORPAY_KEY',
+                        order_id: data.orderId,
+                        handler: async function (response) {
+                            await fetch('/api/users/premium/success', {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    orderId: response.razorpay_order_id,
+                                    paymentId: response.razorpay_payment_id
+                                })
+                            });
+                            alert('Transaction successful!');
+                        },
+                        prefill: {
+                            name: 'Your Name',
+                            email: 'email@example.com'
+                        }
+                    };
+
+                    const rzp = new Razorpay(options);
+                    rzp.open();
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error occurred while creating order.');
+            }
+        });
         const loadExpenses = async () => {
             const token = localStorage.getItem('token');
             const response = await fetch('/api/expenses', {

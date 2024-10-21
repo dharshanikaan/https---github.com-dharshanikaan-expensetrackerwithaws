@@ -5,7 +5,6 @@ const cors = require('cors');
 const userRoutes = require('./routes/userroutes');
 const expenseRoutes = require('./routes/expenseroutes');
 const sequelize = require('./util/database');
-const authenticateToken = require('./middleware/auth');
 
 const app = express();
 app.use(cors());

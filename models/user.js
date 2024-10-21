@@ -20,6 +20,10 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    isPremium: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false, // Track if the user is a premium member
+    },
 });
 
 module.exports = User;
