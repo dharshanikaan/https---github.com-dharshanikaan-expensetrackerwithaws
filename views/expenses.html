@@ -37,51 +37,7 @@
     <ul id="expense-list"></ul>
 
     <script>
-        document.getElementById('buy-premium').addEventListener('click', async () => {
-            try {
-                const response = await fetch('/api/users/premium', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    const options = {
-                        key: 'YOUR_RAZORPAY_KEY',
-                        order_id: data.orderId,
-                        handler: async function (response) {
-                            await fetch('/api/users/premium/success', {
-                                method: 'POST',
-                                headers: {
-                                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    orderId: response.razorpay_order_id,
-                                    paymentId: response.razorpay_payment_id
-                                })
-                            });
-                            alert('Transaction successful!');
-                        },
-                        prefill: {
-                            name: 'Your Name',
-                            email: 'email@example.com'
-                        }
-                    };
-
-                    const rzp = new Razorpay(options);
-                    rzp.open();
-                } else {
-                    alert(data.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error occurred while creating order.');
-            }
-        });
+       
         const loadExpenses = async () => {
             const token = localStorage.getItem('token');
             const response = await fetch('/api/expenses', {

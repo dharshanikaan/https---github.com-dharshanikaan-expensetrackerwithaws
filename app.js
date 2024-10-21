@@ -2,8 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors');
-const userRoutes = require('./routes/userroutes');
-const expenseRoutes = require('./routes/expenseroutes');
+const userRoutes = require('./routes/userRoutes');
+const expenseRoutes = require('./routes/expenseRoutes');
+const purchaseRoutes = require('./routes/purchaseRoutes'); // Import purchase routes
 const sequelize = require('./util/database');
 
 const app = express();
@@ -24,9 +25,14 @@ app.get('/expenses', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'expenses.html'));
 });
 
+app.get('/purchase', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'purchase.html')); // Serve purchase page
+});
+
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/expenses', expenseRoutes);
+app.use('/api/premium', purchaseRoutes); // Use purchase routes
 
 // Error handling for unmatched routes
 app.use((req, res) => {

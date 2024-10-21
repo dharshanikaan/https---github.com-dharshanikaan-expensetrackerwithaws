@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Premium</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <h1>Buy Premium Membership</h1>
+    <button id="buyPremiumBtn">Buy Premium</button>
+
+    <script>
+        document.getElementById('buyPremiumBtn').onclick = async function() {
+            const token = localStorage.getItem('token'); // Get the token from local storage
+            const response = await fetch('/api/premium/order', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}` // Use the token for authorization
+                }
+            });
+
+            const orderData = await response.json();
+
+            if (orderData.orderId) {
+                const options = {
+                    key: 'rzp_test_bo86XocxRgynHk', // Your Razorpay Key ID
+                    amount: orderData.amount, // Amount in paise
+                    currency: "INR",
+                    name: "Your Company Name",
+                    description: "Premium Membership",
+                    order_id: orderData.orderId,
+                    handler: function (response) {
+                        // Payment success handler
+                        fetch('/api/premium/success', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({
+                                orderId: orderData.orderId,
+                                paymentId: response.razorpay_payment_id
+                            })
+                        }).then(res => res.json()).then(data => {
+                            alert(data.message);
+                        });
+                    },
+                    prefill: {
+                        name: "",
+                        email: "",
+                        contact: ""
+                    },
+                    theme: {
+                        color: "#3399cc"
+                    }
+                };
+                const rzp = new Razorpay(options);
+                rzp.open();
+            } else {
+                alert('Error creating order: ' + orderData.message);
+            }
+        };
+    </script>
+</body>
+</html>
