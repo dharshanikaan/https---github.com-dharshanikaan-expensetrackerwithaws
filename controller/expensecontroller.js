@@ -1,24 +1,31 @@
 const Expense = require('../models/expense');
+const { body, validationResult } = require('express-validator');
 
-const addExpense = async (req, res) => {
-    const { amount, description, category } = req.body;
-    const userId = req.userId; // Get userId from the token
+const addExpense = [
+    body('amount').isNumeric().withMessage('Amount is required and must be a number.'),
+    body('description').notEmpty().withMessage('Description is required.'),
+    body('category').notEmpty().withMessage('Category is required.'),
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
 
-    if (!amount || !description || !category) {
-        return res.status(400).json({ message: 'All fields are required.' });
+        const { amount, description, category } = req.body;
+        const userId = req.userId;
+
+        try {
+            const newExpense = await Expense.create({ amount, description, category, userId });
+            res.status(201).json(newExpense);
+        } catch (error) {
+            console.error('Error adding expense:', error.message);
+            res.status(500).json({ message: 'Error adding expense.', error: error.message });
+        }
     }
-
-    try {
-        const newExpense = await Expense.create({ amount, description, category, userId });
-        res.status(201).json(newExpense);
-    } catch (error) {
-        console.error('Error adding expense:', error.message);
-        res.status(500).json({ message: 'Error adding expense.', error: error.message });
-    }
-};
+];
 
 const getExpenses = async (req, res) => {
-    const userId = req.userId; // Get userId from the token
+    const userId = req.userId;
 
     try {
         const expenses = await Expense.findAll({ where: { userId } });
@@ -31,7 +38,7 @@ const getExpenses = async (req, res) => {
 
 const deleteExpense = async (req, res) => {
     const { expenseId } = req.body;
-    const userId = req.userId; // Get userId from the token
+    const userId = req.userId;
 
     try {
         const expense = await Expense.findOne({ where: { id: expenseId, userId } });
