@@ -3,11 +3,11 @@ const User = require('../models/user');
 const getLeaderboard = async (req, res) => {
     try {
         const users = await User.findAll({
-            attributes: ['id', 'name', 'totalexpense'], // Ensure we select these attributes
+            attributes: ['id', 'name', 'totalexpense'],
             order: [['totalexpense', 'DESC']]
         });
 
-        console.log('Leaderboard data:', users); // Log the data being sent
+        console.log('Leaderboard data:', users);
         res.status(200).json(users);
     } catch (error) {
         console.error('Error fetching leaderboard:', error.message);

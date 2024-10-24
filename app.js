@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -6,12 +5,8 @@ const cors = require('cors');
 const userRoutes = require('./routes/userroutes');
 const expenseRoutes = require('./routes/expenseroutes');
 const purchaseRoutes = require('./routes/purchaseroutes');
-const premiumFeaturesRoutes = require('./routes/premiumfeaturesroutes');
+const premiumFeaturesRoutes = require('./routes/premiumfeaturesroutes'); // Ensure this includes the new leaderboard route
 const sequelize = require('./util/database');
-
-// Import models
-const User = require('./models/user'); // Adjust the path as needed
-const Expense = require('./models/expense'); // Adjust the path as needed
 
 const app = express();
 app.use(cors());
@@ -31,8 +26,8 @@ app.get('/expenses', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'expenses.html'));
 });
 
-app.get('/premium', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'premiumfeatures.html'));
+app.get('/leaderboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'premiumfeatures.html')); // Ensure this points to your leaderboard HTML file
 });
 
 // Use routes
@@ -40,15 +35,6 @@ app.use('/api/users', userRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/premium', purchaseRoutes);
 app.use('/api/premium', premiumFeaturesRoutes); // This should come after purchaseRoutes
-
-// Set up associations
-User.associate({ Expense });
-Expense.associate({ User });
-
-// Error handling for unmatched routes
-app.use((req, res) => {
-    res.status(404).send('Not Found');
-});
 
 // Sync database and start server
 sequelize.sync()
