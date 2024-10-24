@@ -1,29 +1,38 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const Sequelize = require('sequelize');
 const sequelize = require('../util/database');
 
 const User = sequelize.define('User', {
     id: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
     },
     name: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: false,
     },
     email: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: false,
         unique: true,
     },
     password: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: false,
     },
     isPremium: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false, // Track if the user is a premium member
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
     },
+    totalexpense: { // Correctly defined field
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+    }
 });
+
+// Add association
+User.associate = (models) => {
+    User.hasMany(models.Expense, { foreignKey: 'userId' });
+};
 
 module.exports = User;

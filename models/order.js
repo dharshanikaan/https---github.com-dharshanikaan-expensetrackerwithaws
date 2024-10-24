@@ -1,22 +1,22 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const Sequelize = require('sequelize');
 const sequelize = require('../util/database');
 
 const Order = sequelize.define('Order', {
     id: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
     },
     userId: {
-        type: DataTypes.INTEGER,
+        type:Sequelize.INTEGER,
         allowNull: false,
     },
     orderId: {
-        type: DataTypes.STRING,
+        type:Sequelize.STRING,
         allowNull: false,
     },
     status: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: false,
     },
 });

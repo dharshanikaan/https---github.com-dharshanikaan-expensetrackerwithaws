@@ -10,6 +10,10 @@
             right: 20px;
             top: 20px;
         }
+        #leaderboard-button {
+            display: none; /* Hide by default */
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -33,6 +37,7 @@
         <input type="submit" value="Add Expense">
     </form>
     <div id="message"></div>
+    <button id="leaderboard-button">View Leaderboard</button>
     <h2>Your Expenses</h2>
     <ul id="expense-list"></ul>
 
@@ -50,6 +55,9 @@
                 const data = await response.json();
                 const messageDiv = document.getElementById('message');
                 messageDiv.textContent = data.isPremium ? 'You are a Premium Member!' : 'You are a Regular Member.';
+                
+                // Show the leaderboard button if the user is a premium member
+                document.getElementById('leaderboard-button').style.display = data.isPremium ? 'inline' : 'none';
             }
         };
 
@@ -193,6 +201,11 @@
             loadUserStatus();
             loadExpenses();
         };
+
+        // Load leaderboard on button click
+        document.getElementById('leaderboard-button').addEventListener('click', async () => {
+            window.location.href = '/premium'; // Redirect to the premium features page
+        });
     </script>
 </body>
 </html>

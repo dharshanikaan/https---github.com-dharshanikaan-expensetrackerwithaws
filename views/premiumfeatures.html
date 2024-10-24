@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+</head>
+<body>
+    <h1>Leaderboard</h1>
+    <table id="leaderboard">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>User Name</th>
+                <th>Total Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Leaderboard rows will be populated here -->
+        </tbody>
+    </table>
+
+    <script>
+        fetch('http://localhost:3000/api/premium/leaderboard')
+            .then(response => {
+                console.log('Response status:', response.status); // Log the response status
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data); // Check the structure of the data
+                // Render the leaderboard with the correct fields
+                renderLeaderboard(data);
+            })
+            .catch(error => console.error('Error fetching leaderboard:', error));
+
+        function renderLeaderboard(data) {
+            const leaderboardContainer = document.querySelector('#leaderboard tbody'); // Select the tbody
+            leaderboardContainer.innerHTML = ''; // Clear existing content
+
+            data.forEach(user => {
+                const row = document.createElement('tr'); // Create a new table row
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>₹${user.totalexpense}</td>
+                `;
+                leaderboardContainer.appendChild(row); // Append the row to the tbody
+            });
+        }
+    </script>
+</body>
+</html>

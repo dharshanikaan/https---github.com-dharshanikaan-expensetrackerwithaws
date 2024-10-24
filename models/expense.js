@@ -1,28 +1,32 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const Sequelize= require('sequelize');
 const sequelize = require('../util/database');
 
 const Expense = sequelize.define('Expense', {
     id: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
     },
     amount: {
-        type: DataTypes.FLOAT,
+        type:Sequelize.FLOAT,
         allowNull: false,
     },
     description: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: false,
     },
     category: {
-        type: DataTypes.STRING,
+        type:Sequelize.STRING,
         allowNull: false,
     },
     userId: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
         allowNull: false,
     },
 });
+
+Expense.associate = (models) => {
+    Expense.belongsTo(models.User, { foreignKey: 'userId' });
+};
 
 module.exports = Expense;
